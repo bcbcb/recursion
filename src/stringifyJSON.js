@@ -21,12 +21,14 @@ var stringifyJSON = function(obj) {
 
   // Arrays
   if (Array.isArray(obj)) {
+    // empty array
     if (obj.length === 0) {
       return '[]';
     }
     for (var i = 0; i < obj.length; i++) {
-      result += stringifyJSON(obj[i]) + ','
-    } 
+      // add commas
+      result += stringifyJSON(obj[i]) + ',';
+   } // remove the trailing comma 
     return '[' + result.slice(0, -1) + ']';
   }
 
@@ -37,17 +39,30 @@ var stringifyJSON = function(obj) {
 
   // Objects
   if (typeof obj === 'object') {
+
+    // empty object
     if (Object.keys(obj).length === 0) {
       return '{}';
     }
-    console.log('KEYS:');
-    console.log(Object.keys(obj));
 
     for (var key in obj) {
-      if (obj[key] !== undefined) {
-        result += stringifyJSON(key) + ':' + stringifyJSON(obj[key]) + ',';
+      var keyString = stringifyJSON(key);
+      var valueString = stringifyJSON(obj[key]);
+      var resultString = keyString + ':' + valueString + ','; 
+
+      // dont stringify anything if the value is undefined or an empty function
+      if (valueString === 'undefined') {
+        resultString = '';
       }
+      if (valueString === '{}' && typeof obj[key] === 'function') {
+        resultString = '';
+      }
+
+      // build the stringified object
+      result += resultString;
+
     }
+
     return '{' + result.slice(0, -1) + '}';
   }
 
