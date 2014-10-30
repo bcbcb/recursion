@@ -4,67 +4,38 @@
 // but you don't so you're going to write it from scratch:
 var stringifyJSON = function(obj) {
     
-  var result = '';
-  console.log("OBJECT -- " + typeof obj);
-  console.log(obj);
+  var result = [];
 
   // Strings in double quotes
   if (typeof obj === 'string') {
-    return '\"'  + obj + '\"';
+    return '"'  + obj + '"';
   }
 
-  // Null, Number, Boolean
-  if (obj === null || typeof obj === 'number' || typeof obj === 'boolean' || typeof obj === 'undefined' ) {
+  // Null, Number, Boolean return string
+  if (obj === null || typeof obj === 'number' || typeof obj === 'boolean' ) {
     return  obj + '';
   }
 
-
-  // Arrays
+  // Arrays in brackets
   if (Array.isArray(obj)) {
-    // empty array
-    if (obj.length === 0) {
-      return '[]';
-    }
     for (var i = 0; i < obj.length; i++) {
       // add commas
-      result += stringifyJSON(obj[i]) + ',';
-   } // remove the trailing comma 
-    return '[' + result.slice(0, -1) + ']';
+      result.push(stringifyJSON(obj[i]));
+   } 
+    return '[' + result.join(',') + ']';
   }
 
-  if (typeof obj === 'function') {
-    console.log('func');
-    return '{}';
-  }
-
-  // Objects
+  // Objects in curly braces
   if (typeof obj === 'object') {
-
-    // empty object
-    if (Object.keys(obj).length === 0) {
-      return '{}';
-    }
-
     for (var key in obj) {
-      var keyString = stringifyJSON(key);
-      var valueString = stringifyJSON(obj[key]);
-      var resultString = keyString + ':' + valueString + ','; 
+      var value = stringifyJSON(obj[key]);
 
-      // dont stringify anything if the value is undefined or an empty function
-      if (valueString === 'undefined') {
-        resultString = '';
+      // Skip if the value is undefined or a function
+      if (typeof value !== 'undefined' && typeof value !== 'function') {
+        result.push( stringifyJSON(key) + ':' + value );
       }
-      if (valueString === '{}' && typeof obj[key] === 'function') {
-        resultString = '';
-      }
-
-      // build the stringified object
-      result += resultString;
-
     }
 
-    return '{' + result.slice(0, -1) + '}';
+    return '{' + result.join(',') + '}';
   }
-
-
 };
