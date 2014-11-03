@@ -5,5 +5,21 @@
 
 // But instead we're going to implement it from scratch:
 var getElementsByClassName = function(className){
-  // your code here
+  var results = [];
+  
+  var traverse = function (element) {
+    if (typeof element.classList !== 'undefined' && element.classList.contains(className)) {
+      results.push(element);
+    }
+    if (element.childNodes) {
+      for (var el in element.childNodes) {
+        traverse(element.childNodes[el]);
+      }
+    }
+  };
+
+  traverse(document.body);
+
+  return results;
+
 };
